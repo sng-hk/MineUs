@@ -1,4 +1,4 @@
-package snghk.itsmine.config;
+package snghk.mineus.config;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
@@ -29,6 +29,7 @@ public class DockerConfig {
                 .connectionTimeout(Duration.ofSeconds(30))
                 .responseTimeout(Duration.ofSeconds(45))
                 .build();
+
 
         // 3. Docker 클라이언트(리모컨) 객체 생성 및 반환
         return DockerClientImpl.getInstance(config, httpClient);

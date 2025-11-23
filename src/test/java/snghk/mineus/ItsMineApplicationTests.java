@@ -1,4 +1,4 @@
-package snghk.itsmine;
+package snghk.mineus;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

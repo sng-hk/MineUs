@@ -1,0 +1,17 @@
+package snghk.mineus.mineserver.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import snghk.mineus.mineserver.entity.MCServer;
+
+import java.util.Optional;
+
+@Repository
+public interface MCServerRepository extends JpaRepository<MCServer, Long> {
+    Optional<MCServer> findByUserId(Long userId);
+    Boolean existsByUserId(Long userId);
+
+    @Query("SELECT MAX(s.port) FROM MCServer s")
+    Integer findMaxPort();
+}

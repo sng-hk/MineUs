@@ -89,7 +89,7 @@ public class MCServerService {
             // 환경 변수 설정
             List<String> envVars = Arrays.asList(
                     "EULA=TRUE",
-                    "VERSION=1.21",
+                    "VERSION=1.21.10",
                     "TYPE=PAPER",
                     "MOTD=" + server.getServerName()
             );

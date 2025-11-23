@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import snghk.mineus.mineserver.entity.MCServer;
 import snghk.mineus.mineserver.repository.MCServerRepository;
-import snghk.mineus.mineserver.service.MCServerService;
 
 import java.util.List;
 

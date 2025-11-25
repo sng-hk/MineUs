@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import snghk.mineus.mineserver.dto.ServerCreateRequest;
 import snghk.mineus.mineserver.dto.ServerCreateResponse;
@@ -27,9 +28,10 @@ public class MCServerController {
 
     @PostMapping("/api/start")
     public ResponseEntity<ServerCreateResponse> startServer(
-            @RequestBody  @Valid ServerCreateRequest request
+            @RequestBody  @Valid ServerCreateRequest request,
+            @AuthenticationPrincipal Long userId
     ) throws InterruptedException {
-        MCServer server = mcServerService.createServer(request);
+        MCServer server = mcServerService.createServer(request, userId);
         ServerCreateResponse response = ServerCreateResponse.from(server);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -27,10 +27,9 @@ public class MCServerService {
 
     @Transactional
     public MCServer createServer(
-            ServerCreateRequest request
+            ServerCreateRequest request,
+            Long userId
     ) {
-        Long userId = request.getUserId();
-
         // 1. [검증] 사용자당 1개 서버 생성 제한
         validateOneServerPerUser(userId);
 

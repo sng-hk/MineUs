@@ -1,4 +1,4 @@
-package snghk.mineus.scheduler;
+package snghk.mineus.global.scheduler;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.InspectContainerResponse;
@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import snghk.mineus.mineserver.entity.MCServer;
 import snghk.mineus.mineserver.repository.MCServerRepository;
 
@@ -34,32 +35,19 @@ public class ServerStatusScheduler {
         }
     }
 
-    private void updateServerStatus(MCServer server) {
+    @Transactional
+    protected void updateServerStatus(MCServer server) {
         try {
-            // 2. Docker에게 상태 물어보기 (docker inspect)
+            // docker inspect
             InspectContainerResponse info = dockerClient.inspectContainerCmd(server.getContainerId()).exec();
 
-            // 3. 상태 판단 로직
             String dockerState = info.getState().getStatus(); // "running", "exited" ...
-            // Docker HealthCheck 결과 ("healthy", "starting", "unhealthy")
+            // Docker HealthCheck ("healthy", "starting", "unhealthy")
             String healthStatus = info.getState().getHealth().getStatus();
 
             if(!dockerState.equals("running") || !healthStatus.equals("healthy")) {
                 server.setRunning(false);
-                mcServerRepository.save(server);
-                }
-//            if ("running".equals(dockerState)) { // Container status
-//                if ("healthy".equals(healthStatus)) { // minecraft server status
-//                    server.setRunning(false);
-//                }
-//            }
-//
-//            // 4. DB와 다르면 업데이트 (변경 감지)
-//            if (!server.isRunning())) {
-//                log.info("✅ 상태 변경 감지: {} ({} -> {})", server.getServerName(), server.isRunning(), "false");
-//                server.isRunning(newStatus);
-//                mcServerRepository.save(server);
-//            }
+            }
 
         } catch (NotFoundException e) {
             // Docker에 컨테이너가 없다면? (누가 수동으로 지웠거나 오류로 삭제됨)

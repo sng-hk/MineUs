@@ -10,7 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface MCServerRepository extends JpaRepository<MCServer, Long> {
-    Optional<MCServer> findByUserId(Long userId);
+    List<MCServer> findAllByUserId(Long userId);
+    Optional<MCServer> findByIdAndUserId(Long serverId, Long userId);
     Boolean existsByUserId(Long userId);
 
     @Query("SELECT MAX(s.port) FROM MCServer s")

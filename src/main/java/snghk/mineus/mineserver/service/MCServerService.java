@@ -3,7 +3,6 @@ package snghk.mineus.mineserver.service;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.*;
-import org.bouncycastle.cms.CMSCompressedData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +15,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+@Transactional(readOnly = true)
 @Service
 public class MCServerService {
     @Autowired
@@ -51,6 +51,17 @@ public class MCServerService {
 
         return mcServer;
     }
+
+    public List<MCServer> getServersByUserId(Long userId) {
+        return mcServerRepository.findAllByUserId(userId);
+    }
+
+    // 스캐닝 방지 (자원 열거형 공격 방지)
+    public MCServer getServerByIdAndUserId(Long serverId, Long userId) {
+        return mcServerRepository.findByIdAndUserId(serverId, userId).orElseThrow(() -> new RuntimeException("Server not found"));
+    }
+
+    // === private methods ===
 
     int assignNewPort() {
         Integer maxPort = mcServerRepository.findMaxPort();
@@ -119,5 +130,4 @@ public class MCServerService {
             throw new ServerLimitExceededException("이미 생성된 서버가 있습니다. (사용자당 1개 제한)");
         }
     }
-
 }

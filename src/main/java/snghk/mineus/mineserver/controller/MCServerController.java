@@ -13,27 +13,52 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import snghk.mineus.mineserver.dto.ServerCreateRequest;
 import snghk.mineus.mineserver.dto.ServerCreateResponse;
+import snghk.mineus.mineserver.dto.ServerDetailResponse;
+import snghk.mineus.mineserver.dto.ServerInstanceResponse;
 import snghk.mineus.mineserver.entity.MCServer;
 import snghk.mineus.mineserver.service.MCServerService;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@RequestMapping("/api/servers")
 @RestController
 @RequiredArgsConstructor
 public class MCServerController {
 
     private final MCServerService mcServerService;
 
-    @PostMapping("/api/start")
+    @PostMapping("/start")
     public ResponseEntity<ServerCreateResponse> startServer(
-            @RequestBody  @Valid ServerCreateRequest request,
+            @RequestBody @Valid ServerCreateRequest request,
             @AuthenticationPrincipal Long userId
     ) throws InterruptedException {
         MCServer server = mcServerService.createServer(request, userId);
         ServerCreateResponse response = ServerCreateResponse.from(server);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<ServerInstanceResponse>> listServers(@AuthenticationPrincipal Long userId) {
+        List<MCServer> servers = mcServerService.getServersByUserId(userId);
+        List<ServerInstanceResponse> response =
+                servers.stream()
+                        .map(ServerInstanceResponse::from)
+                        .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/{serverId}")
+    public ResponseEntity<ServerDetailResponse> getServerDetail(
+            @PathVariable Long serverId,
+            @AuthenticationPrincipal Long userId
+    ) {
+        MCServer server = mcServerService.getServerByIdAndUserId(serverId, userId);
+        ServerDetailResponse response = ServerDetailResponse.from(server);
+        return ResponseEntity.ok(response);
     }
 
     // ... /api/stop 메서드는 동일 ...
